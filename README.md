@@ -1,78 +1,73 @@
-# wdccorewallet
-Updated core to (BTC/LTC) 0.10.2
+Worldcoin integration/staging tree
+================================
 
-HD ecdsa wallets, P2SH/multi transactions, force v2 blocks at 2,000,000
+http://www.worldcoinalliance.net
 
-NO checkpointing
-NOT put back WDC style in (if you do it and remove the frame/toolbar make sure you find a way to enable minimize)
-Regtests not coded
+Copyright (c) 2009-2014 Bitcoin Developers
+Copyright (c) 2011-2014 Litecoin Developers
+Copyright (c) 2013-2014 Worldcoin Developers
+
+What is Worldcoin?
+----------------
+
+Worldcoin is an improved version of Bitcoin using Scrypt as a proof-of-work algorithm.
+ - 30 second block targets
+ - 20160 blocks to retarget difficulty
+ - starts at 64 coins per block
+ - subsidy is reduced 1% every week to a minimum reward of 1 WDC per block
+ - ~265 million total coins
 
 
+For more information, as well as an immediately usable, binary version of
+the Worldcoin client software, see http://www.worldcoinalliance.net.
 
-# errata:
-# - A travis bug causes caches to trample eachother when using the same
-#   compiler key (which we don't use anyway). This is worked around for now by
-#   replacing the "compilers" with a build name prefixed by the no-op ":"
-#   command. See: https://github.com/travis-ci/casher/issues/6
+License
+-------
 
-os: linux
-language: cpp
-env:
-  global:
-    - MAKEJOBS=-j3
-    - RUN_TESTS=false
-    - CCACHE_SIZE=100M
-    - CCACHE_TEMPDIR=/tmp/.ccache-temp
-    - CCACHE_COMPRESS=1
-    - BASE_OUTDIR=$TRAVIS_BUILD_DIR/out
-    - SDK_URL=https://bitcoincore.org/depends-sources/sdks
-cache:
-  apt: true
-  directories:
-  - depends/built
-  - depends/sdk-sources
-  - $HOME/.ccache
-matrix:
-  fast_finish: true
-  include:
-    - compiler: ": ARM"
-      env: HOST=arm-linux-gnueabihf PACKAGES="g++-arm-linux-gnueabihf" DEP_OPTS="NO_QT=1" GOAL="install" BITCOIN_CONFIG="--enable-glibc-back-compat"
-    - compiler: ": bitcoind"
-      env: HOST=x86_64-unknown-linux-gnu PACKAGES="bc" DEP_OPTS="NO_QT=1 NO_UPNP=1 DEBUG=1" RUN_TESTS=true GOAL="install" BITCOIN_CONFIG="--enable-glibc-back-compat CPPFLAGS=-DDEBUG_LOCKORDER"
-    - compiler: ": No wallet"
-      env: HOST=x86_64-unknown-linux-gnu DEP_OPTS="NO_WALLET=1" RUN_TESTS=true GOAL="install" BITCOIN_CONFIG="--enable-glibc-back-compat"
-    - compiler: ": 32-bit + dash"
-      env: HOST=i686-pc-linux-gnu PACKAGES="g++-multilib bc" RUN_TESTS=true GOAL="install" BITCOIN_CONFIG="--enable-glibc-back-compat" USE_SHELL="/bin/dash"
-    - compiler: ": Cross-Mac"
-      env: HOST=x86_64-apple-darwin11 PACKAGES="gcc-multilib g++-multilib cmake libcap-dev libz-dev libbz2-dev" OSX_SDK=10.7 GOAL="deploy"
-    - compiler: ": Win64"
-      env: HOST=x86_64-w64-mingw32 PACKAGES="nsis gcc-mingw-w64-x86-64 g++-mingw-w64-x86-64 binutils-mingw-w64-x86-64 mingw-w64-dev wine bc" RUN_TESTS=true GOAL="deploy" BITCOIN_CONFIG="--enable-gui" MAKEJOBS="-j2"
-    - compiler: ": Win32"
-      env: HOST=i686-w64-mingw32 PACKAGES="nsis gcc-mingw-w64-i686 g++-mingw-w64-i686 binutils-mingw-w64-i686 mingw-w64-dev wine bc" RUN_TESTS=true GOAL="deploy" BITCOIN_CONFIG="--enable-gui" MAKEJOBS="-j2"
-install:
-    - if [ -n "$PACKAGES" ]; then travis_retry sudo apt-get update; fi
-    - if [ -n "$PACKAGES" ]; then travis_retry sudo apt-get install --no-install-recommends --no-upgrade -qq $PACKAGES; fi
-before_script:
-    - unset CC; unset CXX
-    - mkdir -p depends/SDKs depends/sdk-sources
-    - if [ -n "$OSX_SDK" -a ! -f depends/sdk-sources/MacOSX${OSX_SDK}.sdk.tar.gz ]; then wget $SDK_URL/MacOSX${OSX_SDK}.sdk.tar.gz -O depends/sdk-sources/MacOSX${OSX_SDK}.sdk.tar.gz; fi
-    - if [ -n "$OSX_SDK" -a -f depends/sdk-sources/MacOSX${OSX_SDK}.sdk.tar.gz ]; then tar -C depends/SDKs -xf depends/sdk-sources/MacOSX${OSX_SDK}.sdk.tar.gz; fi
-    - make $MAKEJOBS -C depends HOST=$HOST $DEP_OPTS
-script:
-    - if [ -n "$USE_SHELL" ]; then export CONFIG_SHELL="$USE_SHELL"; fi
-    - OUTDIR=$BASE_OUTDIR/$TRAVIS_PULL_REQUEST/$TRAVIS_JOB_NUMBER-$HOST
-    - BITCOIN_CONFIG_ALL="--disable-dependency-tracking --prefix=$TRAVIS_BUILD_DIR/depends/$HOST --bindir=$OUTDIR/bin --libdir=$OUTDIR/lib"
-    - depends/$HOST/native/bin/ccache --max-size=$CCACHE_SIZE
-    - if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then export CCACHE_READONLY=1; fi
-    - test -n "$USE_SHELL" && eval '"$USE_SHELL" -c "./autogen.sh"' || ./autogen.sh
-    - ./configure --cache-file=config.cache $BITCOIN_CONFIG_ALL $BITCOIN_CONFIG || ( cat config.log && false)
-    - make distdir PACKAGE=bitcoin VERSION=$HOST
-    - cd bitcoin-$HOST
-    - ./configure --cache-file=../config.cache $BITCOIN_CONFIG_ALL $BITCOIN_CONFIG || ( cat config.log && false)
-    - make $MAKEJOBS $GOAL || ( echo "Build failure. Verbose build follows." && make $GOAL V=1 ; false )
-    - export LD_LIBRARY_PATH=$TRAVIS_BUILD_DIR/depends/$HOST/lib
-    - if [ "$RUN_TESTS" = "true" ]; then make check; fi
-    - if [ "$RUN_TESTS" = "true" ]; then qa/pull-tester/rpc-tests.sh; fi
-after_script:
-    - if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then (echo "Upload goes here. Something like: scp -r $BASE_OUTDIR server" || echo "upload failed"); fi
+Worldcoin is released under the terms of the MIT license. See `COPYING` for more
+information or see http://opensource.org/licenses/MIT.
 
+Development process
+-------------------
+
+Developers work in their own trees, then submit pull requests when they think
+their feature or bug fix is ready.
+
+If it is a simple/trivial/non-controversial change, then one of the Worldcoin
+development team members simply pulls it.
+
+If it is a *more complicated or potentially controversial* change, then the patch
+submitter will be asked to start a discussion (if they haven't already) on irc at
+irc.freenode.net #worldcoin
+
+The patch will be accepted if there is broad consensus that it is a good thing.
+Developers should expect to rework and resubmit patches if the code doesn't
+match the project's coding conventions (see `doc/coding.txt`) or are
+controversial.
+
+The `master` branch is regularly built and tested, but is not guaranteed to be
+completely stable. [Tags](https://github.com/bitcoin/bitcoin/tags) are created
+regularly to indicate new official, stable release versions of Worldcoin.
+
+Testing
+-------
+
+Testing and code review is the bottleneck for development; we get more pull
+requests than we can review and test. Please be patient and help out, and
+remember this is a security-critical project where any mistake might cost people
+lots of money.
+
+### Automated Testing
+
+Developers are strongly encouraged to write unit tests for new code, and to
+submit new unit tests for old code.
+
+Unit tests for the core code are in `src/test/`. To compile and run them:
+
+    cd src; make -f makefile.unix test
+
+Unit tests for the GUI code are in `src/qt/test/`. To compile and run them:
+
+    qmake WORLDCOIN_QT_TEST=1 -o Makefile.test worldcoin-qt.pro
+    make -f Makefile.test
+    ./worldcoin-qt_test
