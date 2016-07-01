@@ -1,5 +1,6 @@
 // Copyright (c) 2010 Satoshi Nakamoto
 // Copyright (c) 2009-2014 The Bitcoin developers
+// Copyright (c) 2013-2016 The Bitcoin developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -143,12 +144,12 @@ public:
         assert(hashGenesisBlock == uint256("0x7231b064d3e620c55960abce2963ea19e1c3ffb6f5ff70e975114835a7024107"));	
         assert(genesis.hashMerkleRoot == uint256("0x4fe8c1ba0a102fea0643287bb22ce7469ecb9b690362013f269a423fefa77b6e"));
 
-        vSeeds.push_back(CDNSSeedData("worldcoincore.com", "seednode1.worldcoincore.com"));
-		vSeeds.push_back(CDNSSeedData("worldcoincore.com", "seednode2.worldcoincore.com"));
-		vSeeds.push_back(CDNSSeedData("worldcoincore.com", "seednode3.worldcoincore.com"));
-		vSeeds.push_back(CDNSSeedData("worldcoincore.com", "seednode4.worldcoincore.com"));
-		vSeeds.push_back(CDNSSeedData("worldcoincore.com", "seednode5.worldcoincore.com"));
-		vSeeds.push_back(CDNSSeedData("worldcoincore.com", "seednode6.worldcoincore.com"));
+        vSeeds.push_back(CDNSSeedData("worldcoinunited.com", "seednode1.worldcoinunited.com"));
+		vSeeds.push_back(CDNSSeedData("worldcoinunited.com", "seednode2.worldcoinunited.com"));
+		vSeeds.push_back(CDNSSeedData("worldcoinunited.com", "seednode3.worldcoinunited.com"));
+		vSeeds.push_back(CDNSSeedData("worldcoinunited.com", "seednode4.worldcoinunited.com"));
+		vSeeds.push_back(CDNSSeedData("worldcoinunited.com", "seednode5.worldcoinunited.com"));
+		vSeeds.push_back(CDNSSeedData("worldcoinunited.com", "seednode6.worldcoinunited.com"));
 
         base58Prefixes[PUBKEY_ADDRESS] = list_of(73);
         base58Prefixes[SCRIPT_ADDRESS] = list_of(135);
@@ -210,7 +211,7 @@ public:
 
         vFixedSeeds.clear();
         vSeeds.clear();
-        vSeeds.push_back(CDNSSeedData("worldcoincore.com", "testnet-seednode.worldcoincore.com"));
+        vSeeds.push_back(CDNSSeedData("worldcoinunited.com", "testnet-seednode.worldcoinunited.com"));          
         vSeeds.push_back(CDNSSeedData("cryptodiggers.eu", " testnet-seed-wdc.cryptodiggers.eu"));
 
         base58Prefixes[PUBKEY_ADDRESS] = list_of(111);
